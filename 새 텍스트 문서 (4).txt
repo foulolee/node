@@ -1,0 +1,551 @@
+164  23/03/22 17:22:47 su - hfapache
+  165  23/03/22 17:24:12 cd hfapache/apache2.4/bin/
+  166  23/03/22 17:25:43 setcap 'cap_net_bind_service=+ep' httpd
+
+
+
+chmod +s httpd
+ chmod g+rw httpd
+
+chmod g+rwx httpd
+chmod 4750 httpd
+chmod +s httpd
+
+
+
+jdcadmin!#24
+
+yum inst
+
+all -y pam-devel
+# wget http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.3p2.tar.gz
+# tar zxvf openssh-9.3p2.tar.gz
+# cd openssh-9.3p2
+# ./configure \
+--prefix=/usr/local/openssh \
+--with-ssl-dir=/usr/local/ssl \
+--with-privsep-user=sshd \
+--with-zlib \
+--with-pam \
+--with-md5-passwords
+
+
+make && make install
+
+mv /usr/sbin/sshd /usr/sbin/sshd.ori
+mv /usr/bin/ssh /usr/bin/ssh.ori
+mv /usr/bin/ssh-add /usr/bin/ssh-add.ori
+mv /usr/bin/ssh-agent /usr/bin/ssh-agent.ori
+mv /usr/bin/ssh-keygen /usr/bin/ssh-keygen.ori
+mv /usr/bin/ssh-keyscan /usr/bin/ssh-keyscan.ori
+mv /usr/bin/scp  /usr/bin/scp.ori
+mv /usr/bin/sftp /usr/bin/sftp.ori
+mv /usr/libexec/openssh/sftp-server  /usr/libexec/openssh/sftp-server.ori
+mv /usr/libexec/openssh/ssh-keysign /usr/libexec/openssh/ssh-keysign.ori
+mv /usr/libexec/openssh/ssh-pkcs11-helper /usr/libexec/openssh/ssh-pkcs11-helper.ori
+
+ln -s /usr/local/openssh/bin/* /usr/bin
+ln -s /usr/local/openssh/libexec/* /usr/libexec/openssh/
+ln -s /usr/local/openssh/sbin/* /usr/sbin
+
+
+# mv /usr/lib/systemd/system/sshd.service /usr/lib/systemd/system/sshd.service.ori
+# vi /usr/lib/systemd/system/sshd.service
+
+[Unit]
+Description=OpenSSH server daemon fix
+#Documentation=man:sshd(8) man:sshd_config(5)
+#After=network.target sshd-keygen.service
+Wants=sshd-keygen.service
+
+ 
+[Service]
+#Type=notify
+#EnvironmentFile=/etc/sysconfig/sshd
+#ExecStart=/usr/sbin/sshd -D $OPTIONS
+ExecStart=/usr/local/openssh/sbin/sshd
+#ExecReload=/bin/kill -HUP $MAINPID
+#KillMode=process
+Restart=on-failure
+RestartSec=10s
+ DBSAFER DB (DB접근제어)
+[Install]
+WantedBy=multi-user.target
+
+D'Amo(DB암호화)
+systemctl daemon-reload
+systemctl restart sshd
+systemctl status sshd
+
+
+V3 Net Server
+ShellMonitor
+AVG RDP 보호 및 서버 백신
+AVAST 서버용 백신
+i-oneNGS
+
+
+
+/etc/init.d/sshd stop
+chkconfig --del sshd
+systemctl enable sshd
+systemctl start sshd
+
+
+전희철
+- 파주시청소년재단
+- 큐비트
+- 한국지역난방기술
+- 광양시청
+- 센코
+- 성남시육아종합지원센터
+
+이한나
+- 와토시스-수산공익직불제
+- 한국어촌어항공단-낚시누리
+- 국립고궁박물관
+- 제이컬렉션
+- 한국조선해양
+
+3. OpenSSH
+
+cd /usr/local/src
+
+wget https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.2p1.tar.gz
+
+tar -xzvf openssh-9.2p1.tar.gz
+
+systemctl stop sshd
+
+cp -r /etc/ssh /etc/ssh.backup
+
+yum remove openssh -y
+
+rm -f /etc/ssh/ssh_host_*
+
+cd openssh-9.2p1
+
+./configure --prefix=/usr/local/openssh --with-ssl-dir=/usr/local/ssl --with-sysconfdir=/etc/ssh --with-md5-passwords
+
+make
+
+make install
+
+cd ./contrib
+
+cp sshd.pam.generic /etc/pam.d/sshd
+
+cp redhat/sshd.init /etc/init.d/sshd
+
+vi /etc/init.d/sshd *찾아서 수정
+
+SSHD=/usr/local/openssh/sbin/sshd
+...
+/usr/local/openssh/bin/ssh-keygen -A
+chkconfig --add sshd
+
+
+ln -s /usr/local/openssh/etc  /etc/ssh
+ln -s /usr/local/openssh/bin/* /usr/bin/
+ln -s /usr/local/openssh/sbin/* /usr/sbin/
+ln -s /usr/local/openssh/libexec/* /usr/sbin/
+
+
+
+
+vi /usr/local/openssh/etc/sshd_config *찾아서 수정
+
+PermitRootLogin yes
+4. 확인
+
+service sshd start
+
+ssh -V
+[출처] OpenSSH 업그레이드 - CentOS/RHEL 7.x|작성자 상석하대
+
+오픈소스 케어팩 서비스
+WatchAll LMS
+WatchAll APM
+WatchAll DBMS(모니터링)
+WatchAll NMS
+WatchAll SMS
+매니지드 Security
+Shift Migration
+Zenius-EMS
+Zenius-APM
+Felice for Apache Kafka
+onTune
+
+개인정보 종합관리
+셜록홈즈 서버스캔 on Cloud
+셜록홈즈 PC정보보안 on Cloud
+Blue X-ray DLP
+Privacy-i Cloud
+셜록홈즈 PrivacyCenter on CLOUD v5.0
+U-PRIVACY SAFER
+PCFILTER
+IDENTITY SHIELD
+UBI SAFER-PSM
+Server-i Cloud
+SERVERFILTER
+
+
+vi /usr/lib/systemd/system/sshd.service
+ 
+ iSCSI
+sudo nano /etc/systemd/system/sshd.service
+그런 다음, 다음과 같이 유닛 파일 내용을 작성합니다.
+
+plaintext
+Copy code
+[Unit]
+Description=OpenSSH server
+After=network.target
+
+[Service]
+ExecStart=/etc/init.d/sshd start
+ExecStop=/etc/init.d/sshd stop
+ExecReload=/etc/init.d/sshd reload
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+이 예제에서는 OpenSSH 서버를 관리하는 systemd 유닛 파일을 생성했습니다. 여기서 중요한 점은 ExecStart, ExecStop, ExecReload 등의 항목에서 시스템 서비스를 관리하는 명령을 지정하는 것입니다.
+
+파일을 작성한 후에는 저장하고 닫고, systemd에게 새로운 유닛 파일이 추가되었음을 알리기 위해 다음 명령을 실행하여 설정을 다시 로드합니다.
+
+bash
+Copy code
+sudo systemctl daemon-reload
+
+
+
+
+
+3. mariadb start
+
+[root@localhost ~]# systemctl start mariadb
+1
+[root@localhost ~]# systemctl start mariadb
+
+
+3-1 ) mysql 접속하여 버전 및 언어 확인
+
+
+[root@localhost ~]# mysql
+
+MariaDB [(none)]> \s
+--------------
+mysql  Ver 15.1 Distrib 10.5.10-MariaDB, for Linux (x86_64) using readline 5.1
+
+Connection id:          3
+Current database:
+Current user:           root@localhost
+SSL:                    Not in use
+Current pager:          stdout
+Using outfile:          ''
+Using delimiter:        ;
+Server:                 MariaDB
+Server version:         10.5.10-MariaDB MariaDB Server
+Protocol version:       10
+Connection:             Localhost via UNIX socket
+Server characterset:    latin1
+Db     characterset:    latin1
+Client characterset:    utf8
+Conn.  characterset:    utf8
+UNIX socket:            /var/lib/mysql/mysql.sock
+Uptime:                 21 sec
+
+Threads: 1  Questions: 4  Slow queries: 0  Opens: 17  Open tables: 10  Queries per second avg: 0.190
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+[root@localhost ~]# mysql
+ 
+MariaDB [(none)]> \s
+--------------
+mysql  Ver 15.1 Distrib 10.5.10-MariaDB, for Linux (x86_64) using readline 5.1
+ 
+Connection id:          3
+Current database:
+Current user:           root@localhost
+SSL:                    Not in use
+Current pager:          stdout
+Using outfile:          ''
+Using delimiter:        ;
+Server:                 MariaDB
+Server version:         10.5.10-MariaDB MariaDB Server
+Protocol version:       10
+Connection:             Localhost via UNIX socket
+Server characterset:    latin1
+Db     characterset:    latin1
+Client characterset:    utf8
+Conn.  characterset:    utf8
+UNIX socket:            /var/lib/mysql/mysql.sock
+Uptime:                 21 sec
+ 
+Threads: 1  Questions: 4  Slow queries: 0  Opens: 17  Open tables: 10  Queries per second avg: 0.190
+
+
+
+rwxr-x--- 7 hftomcat wasadm       4096 10월  3  2023 jam
+drwxr-x--- 8 hftomcat wasadm       4096 10월 12  2023 jamadmin
+drwx------ 8 hftomcat wasadm        124  8월 30  2023 jdcadmin
+drwx------ 8 hftomcat wasadm        117 11월 19  2023 jdcenter  jdbc:tibero:thin:@172.17.100.6:8629:WEBDB, UserName=JWCNTR17
+drwxr-x--- 7 hftomcat wasadm        131 12월  5  2023 jejusp  jdbc:tibero:thin:@172.17.100.6:8629:WEBDB
+drwxr-x--- 7 hftomcat wasadm        131  8월 25  2023 jejusp-admin jdbc:tibero:thin:@172.17.100.6:8629:WEBDB,
+
+
+
+
+
+find  -not -user 사용자명
+find  -not -user root -exec ls -l {} \;
+
+
+
+
+
+SELECT username, default_tablespace
+FROM dba_users
+WHERE username = 'JWCNTR17';
+
+
+SELECT 
+    USERNAME,
+    DEFAULT_TABLESPACE
+FROM 
+    DBA_USERS;
+
+
+
+-> DB이름 <-
+SELECT NAME
+FROM V$DATABASE;
+
+
+
+-> 유저 및 테이블스페이스 조회 <-
+
+SELECT 
+    u.USERNAME,
+    u.DEFAULT_TABLESPACE,
+    df.FILE_NAME AS DATAFILE_NAME
+FROM 
+    DBA_USERS u
+    LEFT JOIN DBA_DATA_FILES df ON u.DEFAULT_TABLESPACE = df.TABLESPACE_NAME;
+
+
+테이블 스페이스 만들기
+CREATE TABLESPACE WCNTR17
+DATAFILE '/data/WEBDB/datafile/WCNTR17.dtf'
+SIZE 100M
+AUTOEXTEND ON
+NEXT 10M MAXSIZE UNLIMITED;
+
+유저 만들기
+CREATE USER WCNTR17
+IDENTIFIED BY "!tpsxjghavl0"
+DEFAULT TABLESPACE WCNTR17
+TEMPORARY TABLESPACE TEMP
+QUOTA UNLIMITED ON WCNTR17;
+
+
+GRANT CONNECT, RESOURCE TO WCNTR17;
+
+
+
+
+테이블 스페이스 만들기
+CREATE TABLESPACE JAM_WEB
+DATAFILE '/tbdata/jamdb/JAM_WEB.dtf'
+SIZE 100M
+AUTOEXTEND ON
+NEXT 10M MAXSIZE UNLIMITED;
+
+CREATE USER JAM_WEB
+IDENTIFIED BY "!jamghavpdlwl1"
+DEFAULT TABLESPACE JAM_WEB
+TEMPORARY TABLESPACE TEMP
+QUOTA UNLIMITED ON JAM_WEB;
+
+GRANT CONNECT, RESOURCE TO JAM_WEB;
+
+GRANT JAM_WEB TO JAM_WEB;
+
+select * from sys._vt_nls_character_set;
+
+
+tbexport username=sys password=tibero sid=JAMDB file=export.dat  USER=JWCNTR17 백업 하기
+
+[출처] 티베로 데이터베이스 캐릭터셋 확인|작성자 실력없는개발자
+
+
+GRANT CREATE TABLESPACE, ALTER TABLESPACE TO JAM_WEB;
+
+
+유저 삭제
+DROP USER JAM_WEB CASCADE;
+
+
+DROP TABLESPACE JAMHOME_DATA_TS INCLUDING CONTENTS AND DATAFILES;
+
+CREATE TABLESPACE JAMHOME_DATA_TS
+DATAFILE '/tbdata/jamdb/JAMHOME_DATA_TS.dtf' SIZE 100M
+AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED;
+
+
+
+
+
+
+
+
+
+박물관 (UTF-8)
+tbexport username=sys password=tibero sid=JAMDB file=export.dat full=y  USER=JAM_WEB
+
+
+테이블 스페이스 만들기
+CREATE TABLESPACE JAMHOME_DATA_TS
+DATAFILE '/tbdata/jamdb/JAMHOME_DATA_TS.dtf'
+SIZE 100M
+AUTOEXTEND ON
+NEXT 10M MAXSIZE UNLIMITED;
+
+CREATE USER JAM_WEB
+IDENTIFIED BY "!jamghavpdlwl1"
+DEFAULT TABLESPACE JAMHOME_DATA_TS
+TEMPORARY TABLESPACE TEMP
+QUOTA UNLIMITED ON JAMHOME_DATA_TS;
+
+GRANT CONNECT, RESOURCE TO JAM_WEB;
+
+
+
+유저 삭제
+DROP USER JAM_WEB CASCADE;
+DROP TABLESPACE JAMHOME_DATA_TS INCLUDING CONTENTS AND DATAFILES;
+
+
+tbimport username=sys password='tibero' SID=jamdb FILE=export.dat full=y user=JAM_WEB
+
+
+
+
+센터 / 첨단 (EUCK)
+tbexport username=sys password=tibero sid=WEBDB file=JWCNTR17.dat USER=JWCNTR17
+tbexport username=sys password=tibero sid=WEBDB file=JWSP13.dat  USER=JWSP13
+
+-- 박물관 --
+
+
+
+
+
+-- 센터 -- 
+테이블 스페이스 만들기
+CREATE TABLESPACE JWCNTR17_DATA_TS
+DATAFILE '/tbdata/jspdb/JWCNTR17_DATA_TS.dtf'
+SIZE 100M
+AUTOEXTEND ON
+NEXT 10M MAXSIZE UNLIMITED;
+
+CREATE TABLESPACE JDCWEB
+DATAFILE '/tbdata/jspdb/JDCWEB.dtf' SIZE 100M
+AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED;
+
+CREATE USER JWCNTR17
+IDENTIFIED BY "!tpsxjghavl0"
+DEFAULT TABLESPACE JWCNTR17_DATA_TS
+TEMPORARY TABLESPACE TEMP
+QUOTA UNLIMITED ON JWCNTR17_DATA_TS;
+
+GRANT CONNECT, RESOURCE TO JWCNTR17;
+
+삭제하기
+DROP USER JWCNTR17 CASCADE;
+DROP TABLESPACE JWCNTR17_DATA_TS INCLUDING CONTENTS AND DATAFILES;
+DROP TABLESPACE JDCWEB INCLUDING CONTENTS AND DATAFILES;
+
+
+
+-- 첨단 -- 
+테이블 스페이스 만들기
+CREATE TABLESPACE JWSP13_TBS
+DATAFILE '/tbdata/jspdb/JWSP13_TBS.dtf'
+SIZE 100M
+AUTOEXTEND ON
+NEXT 10M MAXSIZE UNLIMITED;
+
+CREATE TABLESPACE JDCNEW
+DATAFILE '/tbdata/jspdb/JDCNEW.dtf' SIZE 100M
+AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED;
+
+CREATE TABLESPACE JAS_DATA
+DATAFILE '/tbdata/jspdb/JAS_DATA.dtf' SIZE 100M
+AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED;
+
+CREATE TABLESPACE USERS
+DATAFILE '/tbdata/jspdb/USERS.dtf' SIZE 100M
+AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED;
+
+CREATE USER JWSP13
+IDENTIFIED BY "!rhkrlghavl0"
+DEFAULT TABLESPACE JWSP13_TBS
+TEMPORARY TABLESPACE TEMP
+QUOTA UNLIMITED ON JWSP13_TBS;
+
+GRANT CONNECT, RESOURCE TO JWSP13;
+
+
+삭제하기
+DROP USER JWSP13 CASCADE;
+DROP TABLESPACE JWSP13_TBS INCLUDING CONTENTS AND DATAFILES;
+DROP TABLESPACE JDCNEW INCLUDING CONTENTS AND DATAFILES;
+DROP TABLESPACE JAS_DATA INCLUDING CONTENTS AND DATAFILES;
+DROP TABLESPACE USERS INCLUDING CONTENTS AND DATAFILES;
+
+tbimport username=JWCNTR17 password='!tpsxjghavl0' SID=jspdb FILE=JWCNTR17.dat full=y
+tbimport username=JWSP13 password='!rhkrlghavl0' SID=jspdb FILE=JWSP13.dat full=y
+tbimport username=sys password='tibero' SID=jspdb FILE=JWSP13.dat full=y USER=JWSP13
+
+
+
+계 34168824
+-rw-r----- 1 tibero dba  524288000  7월 30 02:35 CUBEONE.dbf
+-rw-r----- 1 tibero dba 2147483648  7월 30 10:15 JAS_DATA.dtf
+-rw-r----- 1 tibero dba 5368709120  7월 30 10:46 JDCNEW.dtf
+-rw-r----- 1 tibero dba 2147483648  7월 30 10:37 JDCWEB.dtf
+-rw-r----- 1 tibero dba 5368709120  7월 30 10:46 JWCNTR17_DATA_TS.dtf
+-rw-r----- 1 tibero dba 5368709120  7월 30 02:35 JWSP13_TBS.dtf
+-rw-r----- 1 tibero dba  104857600  7월 30 02:35 USERS.dtf
+drw-r----- 2 tibero dba         70  3월 22  2023 java
+-rw-r----- 1 tibero dba 1073741824  7월 30 10:45 syssub001.dtf
+-rw-r----- 1 tibero dba 1073741824  7월 30 10:45 system001.dtf
+-rw-r----- 1 tibero dba 5368709120  7월 30 10:31 temp001.dtf
+-rw-r----- 1 tibero dba 5368709120  7월 30 10:46 undo001.dtf
+-rw-r----- 1 tibero dba 1073741824  7월 30 02:35 usr001.dtf
+
